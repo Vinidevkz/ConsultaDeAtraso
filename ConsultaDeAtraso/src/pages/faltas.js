@@ -1,11 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, FlatList } from 'react-native';
 
 export default function MinhasFaltas() {
   return (
     <View style={styles.container}>
-      <Text>Faltas</Text>
-      <StatusBar style="auto" />
+      <FlatList
+      
+      />
     </View>
   );
 }

@@ -1,34 +1,43 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
-import RNPickerSelect from 'react-native-picker-select';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export default function Home() {
+  const [nomeAluno, setNomeAluno] = useState('');
+  const [horario, setHorario] = useState('');
+  const [periodo, setPeriodo] = useState('');
+  const [modulo, setModulo] = useState('');
+  const [curso, setCurso] = useState('');
 
-  const [nomeAluno, setNomeAluno] = useState(' ')
-  const [horario, setHorario] = useState(' ')
-  const [periodo, setPeriodo] = useState(' ')
-  const [modulo, setModulo] = useState(' ')
-  const [curso, setCurso] = useState(' ')
+  const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [isError, setIsError] = useState(false);
 
+  
+  const cadastrarFalta = async() => {
+    try{
+  const response = await fetch("http://10.0.2.2:8000/api/faltas", {
+    method:"POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      nomeAluno: 'AHHHH',
+      horarioFalta: '12:10',
+      periodoCurso:'tarde',
+      moduloCurso:1,
+      nomeCurso: 'Ds',
+    }),
+  });
 
-  const cadastrarFalta = () => {
-    fetch('http://10.0.2.2:8000/falta/post', {
-      method: 'post',
-      headers: {
-        'Accept': 'application/json',
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify({
-        nomeAluno: nomeAluno,
-        periodoCurso: periodo,
-        nomeCurso: curso,
-        moduloCurso: modulo,
-        horarioFala: horario,
-      })
-    })      
+    const json = await response.json();
+    console.log("Sucesso ao cadastrar usuario", json);
+
+    }catch(error){
+      console.log("Erro ao cadastrar usuario", error)
+    }
   }
-
+  
 
   return (
     <View style={styles.container}>
@@ -40,27 +49,39 @@ export default function Home() {
         onChangeText={text => setNomeAluno(text)}
       />
 
-<TextInput
-        placeholder='Periodo'
+      <TextInput
+        placeholder='Nome do Curso'
+        style={[styles.input, styles.text]}
+        onChangeText={text => setCurso(text)}
+      />
+
+      <TextInput
+        placeholder='Período'
         style={[styles.input, styles.text]}
         onChangeText={text => setPeriodo(text)}
       />
-
 
       <TextInput
         placeholder='Módulo'
         style={[styles.input, styles.text]}
         onChangeText={text => setModulo(text)}
       />
+
       <TextInput
         placeholder='Horário de Entrada'
         style={[styles.input, styles.text]}
         onChangeText={text => setHorario(text)}
       />
 
-      <TouchableOpacity style={styles.button} onPress={() => cadastrarFalta()}>
+      <TouchableOpacity style={styles.button} onPress={cadastrarFalta}>
         <Text style={styles.text}>Enviar</Text>
       </TouchableOpacity>
+
+      {feedbackMessage ? (
+        <Text style={[styles.feedback, isError ? styles.errorText : styles.successText]}>
+          {feedbackMessage}
+        </Text>
+      ) : null}
 
       <StatusBar style="auto" />
     </View>
@@ -97,7 +118,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     paddingVertical: 10,
   },
-  dropdownContainer: {
-    width: '80%',  // Ajuste para alinhar com o tamanho dos inputs
+  feedback: {
+    marginTop: 20,
+    fontSize: 16,
+  },
+  errorText: {
+    color: 'red',
+  },
+  successText: {
+    color: 'green',
   },
 });

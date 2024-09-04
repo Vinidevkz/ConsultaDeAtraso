@@ -15,7 +15,7 @@ class FaltaController extends Controller
     public function index()
     {
         $faltas = Falta::all();
-        return response()->json($faltas);
+        return $faltas;
     }
 
     /**
@@ -34,16 +34,22 @@ class FaltaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+public function store(Request $request)
+{
+ 
         $falta = new Falta();
 
         $falta->nomeAluno = $request->nomeAluno;
-        $falta->horario = $request->horario;
-        $falta->modulo = $request->modulo;
-        
+        $falta->nomeCurso = $request->nomeCurso;
+        $falta->periodoCurso = $request->periodoCurso;
+        $falta->horarioFalta = $request->horarioFalta;
+        $falta->moduloCurso = $request->moduloCurso;
+
         $falta->save();
-    }
+
+        return response()->json($falta);
+}
+
 
     /**
      * Display the specified resource.

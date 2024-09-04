@@ -26,8 +26,6 @@ Route::prefix('cursos')->group(function () {
     Route::get('/', [CursoController::class, 'index']);
 });
 
-// Grupo de rotas para faltas
-Route::prefix('faltas')->group(function () {
-    Route::get('/', [FaltaController::class, 'index']);
-    Route::post('/post', [FaltaController::class, 'store']);
-});
+Route::get('/faltas', [FaltaController::class, 'index']);
+
+Route::post('/faltas', [FaltaController::class, 'store']);
