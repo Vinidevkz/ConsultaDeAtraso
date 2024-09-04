@@ -4,26 +4,31 @@ import RNPickerSelect from 'react-native-picker-select';
 import { useState, useEffect } from 'react';
 
 export default function Home() {
-  const [selectedValue, setSelectedValue] = useState(null);
-  const [cursos, setCursos] = useState([]);
 
-  // async function pegarCursos() {
-  //   try {
-  //     const response = await fetch('http://10.0.2.2:8000/api/curso');
-  //     const json = await response.json();
-  //     const formattedCursos = json.map(curso => ({
-  //       label: curso.nome, // Ajuste isso para corresponder ao campo que você quer mostrar
-  //       value: curso.id    // Ajuste isso para corresponder ao campo que você quer usar como valor
-  //     }));
-  //     setCursos(formattedCursos);
-  //   } catch (error) {
-  //     console.error('Erro ao buscar cursos:', error);
-  //   }
-  // }
+  const [nomeAluno, setNomeAluno] = useState(' ')
+  const [horario, setHorario] = useState(' ')
+  const [periodo, setPeriodo] = useState(' ')
+  const [modulo, setModulo] = useState(' ')
+  const [curso, setCurso] = useState(' ')
 
-  // useEffect(() => {
-  //   pegarCursos();
-  // }, []);
+
+  const cadastrarFalta = () => {
+    fetch('http://10.0.2.2:8000/falta/post', {
+      method: 'post',
+      headers: {
+        'Accept': 'application/json',
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        nomeAluno: nomeAluno,
+        periodoCurso: periodo,
+        nomeCurso: curso,
+        moduloCurso: modulo,
+        horarioFala: horario,
+      })
+    })      
+  }
+
 
   return (
     <View style={styles.container}>
@@ -32,31 +37,28 @@ export default function Home() {
       <TextInput
         placeholder='Nome do Aluno(a)'
         style={[styles.input, styles.text]}
+        onChangeText={text => setNomeAluno(text)}
       />
 
-      <View style={styles.dropdownContainer}>
-        {/* <RNPickerSelect
-          placeholder={{
-            label: 'Selecione uma opção...',
-            value: null,
-          }}
-          onValueChange={(value) => setSelectedValue(value)}
-          items={cursos}
-          value={selectedValue}
-        /> */}
-        <Text>Selecionado: {selectedValue}</Text>
-      </View>
+<TextInput
+        placeholder='Periodo'
+        style={[styles.input, styles.text]}
+        onChangeText={text => setPeriodo(text)}
+      />
+
 
       <TextInput
         placeholder='Módulo'
         style={[styles.input, styles.text]}
+        onChangeText={text => setModulo(text)}
       />
       <TextInput
         placeholder='Horário de Entrada'
         style={[styles.input, styles.text]}
+        onChangeText={text => setHorario(text)}
       />
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={() => cadastrarFalta()}>
         <Text style={styles.text}>Enviar</Text>
       </TouchableOpacity>
 

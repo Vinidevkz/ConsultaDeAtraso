@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CursoController;
+use App\Http\Controllers\FaltaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -9,14 +10,24 @@ use Illuminate\Support\Facades\Route;
 | API Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
+| Aqui você pode registrar rotas para a API de sua aplicação. Estas rotas
+| são carregadas pelo RouteServiceProvider dentro de um grupo que é
+| atribuído ao middleware "api". Aproveite para construir sua API!
 |
 */
 
+// Rota para obter informações do usuário autenticado
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/curso', [CursoController::class, 'index']);
+// Grupo de rotas para cursos
+Route::prefix('cursos')->group(function () {
+    Route::get('/', [CursoController::class, 'index']);
+});
+
+// Grupo de rotas para faltas
+Route::prefix('faltas')->group(function () {
+    Route::get('/', [FaltaController::class, 'index']);
+    Route::post('/post', [FaltaController::class, 'store']);
+});

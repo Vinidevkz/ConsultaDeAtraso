@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Curso;
 use Illuminate\Http\Request;
+use App\Models\Falta;
 
-class CursoController extends Controller
+class FaltaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,10 +14,8 @@ class CursoController extends Controller
      */
     public function index()
     {
-        $cursos = Curso::all();
-
-        // Retornar a resposta JSON com os cursos
-        return response()->json($cursos);
+        $faltas = Falta::all();
+        return response()->json($faltas);
     }
 
     /**
@@ -25,9 +23,9 @@ class CursoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+
     }
 
     /**
@@ -38,7 +36,13 @@ class CursoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $falta = new Falta();
+
+        $falta->nomeAluno = $request->nomeAluno;
+        $falta->horario = $request->horario;
+        $falta->modulo = $request->modulo;
+        
+        $falta->save();
     }
 
     /**
