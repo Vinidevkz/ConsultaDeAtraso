@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Falta;
+use App\Models\atraso;
 
-class FaltaController extends Controller
+class AtrasoController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,8 +14,8 @@ class FaltaController extends Controller
      */
     public function index()
     {
-        $faltas = Falta::all();
-        return $faltas;
+        $atrasos = atraso::all();
+        return $atrasos;
     }
 
     /**
@@ -37,17 +37,17 @@ class FaltaController extends Controller
 public function store(Request $request)
 {
  
-        $falta = new Falta();
+        $atraso = new Atraso();
 
-        $falta->nomeAluno = $request->nomeAluno;
-        $falta->nomeCurso = $request->nomeCurso;
-        $falta->periodoCurso = $request->periodoCurso;
-        $falta->horarioFalta = $request->horarioFalta;
-        $falta->moduloCurso = $request->moduloCurso;
+        $atraso->nomeAluno = $request->nomeAluno;
+        $atraso->nomeCurso = $request->nomeCurso;
+        $atraso->periodoCurso = $request->periodoCurso;
+        $atraso->horarioatraso = $request->horarioatraso;
+        $atraso->moduloCurso = $request->moduloCurso;
 
-        $falta->save();
+        $atraso->save();
 
-        return response()->json($falta);
+        return response()->json($atraso);
 }
 
 

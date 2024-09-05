@@ -5,18 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Falta extends Model
+class Atraso extends Model
 {
     use HasFactory;
 
     // Define a tabela associada ao modelo, se não seguir a convenção padrão
-    protected $table = 'tbfalta';
+    protected $table = 'tbatraso';
 
     // Defina os campos que podem ser preenchidos em massa
     protected $fillable = [
-        'idFalta',
+        'idatraso',
         'nomeAluno',
-        'horarioFalta',
+        'horarioAtraso',
         'periodoCurso',
         'moduloCurso',
         'nomeCurso',

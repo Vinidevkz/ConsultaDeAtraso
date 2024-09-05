@@ -22,11 +22,11 @@ export default function Home() {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      nomeAluno: 'AHHHH',
-      horarioFalta: '12:10',
-      periodoCurso:'tarde',
-      moduloCurso:1,
-      nomeCurso: 'Ds',
+      nomeAluno: nomeAluno,
+      horarioFalta: horario,
+      periodoCurso: periodo,
+      moduloCurso: modulo,
+      nomeCurso: curso,
     }),
   });
 
