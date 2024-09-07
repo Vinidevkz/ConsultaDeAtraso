@@ -9,7 +9,7 @@ export default function MyDrawer() {
   return (
     <Drawer.Navigator initialRouteName={Home}>
       <Drawer.Screen name="Home" component={Home} />
-      <Drawer.Screen name="MinhasFaltas" component={MinhasFaltas} />
+      <Drawer.Screen name="Minhas Faltas" component={MinhasFaltas} />
     </Drawer.Navigator>
   );
 }
