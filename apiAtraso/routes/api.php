@@ -28,4 +28,4 @@ Route::prefix('cursos')->group(function () {
 
 Route::get('/faltas', [FaltaController::class, 'index']);
 
-Route::post('/faltas', [FaltaController::class, 'store']);
+Route::post('/faltas/post', [FaltaController::class, 'store']);
