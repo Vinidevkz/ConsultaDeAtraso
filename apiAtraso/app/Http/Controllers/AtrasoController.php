@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\atraso;
+use App\Models\Atraso;
 
 class AtrasoController extends Controller
 {

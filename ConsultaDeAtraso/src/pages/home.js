@@ -15,7 +15,7 @@ export default function Home() {
 
   const cadastrarFalta = async () => {
     try {
-      const response = await fetch("http://10.0.2.2:8000/api/faltas/post", {
+      const response = await fetch("http://10.0.2.2:8000/api/atraso/post", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -44,7 +44,7 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Cadastrar Falta:</Text>
+      <Text style={styles.title}>Cadastrar Atraso:</Text>
 
       <TextInput
         placeholder='Nome do Aluno(a)'

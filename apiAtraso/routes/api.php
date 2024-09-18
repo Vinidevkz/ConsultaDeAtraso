@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\AtrasoController;
 use App\Http\Controllers\CursoController;
 use App\Http\Controllers\FaltaController;
+use App\Models\Atraso;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +28,6 @@ Route::prefix('cursos')->group(function () {
     Route::get('/', [CursoController::class, 'index']);
 });
 
-Route::get('/faltas', [FaltaController::class, 'index']);
+Route::get('/atraso', [AtrasoController::class, 'index']);
 
-Route::post('/faltas/post', [FaltaController::class, 'store']);
+Route::post('/atraso/post', [AtrasoController::class, 'store']);
