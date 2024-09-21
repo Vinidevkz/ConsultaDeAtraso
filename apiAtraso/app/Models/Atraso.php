@@ -9,23 +9,30 @@ class Atraso extends Model
 {
     use HasFactory;
 
-    // Define a tabela associada ao modelo, se não seguir a convenção padrão
     protected $table = 'tbatraso';
 
-    // Defina os campos que podem ser preenchidos em massa
     protected $fillable = [
-        'idatraso',
         'nomeAluno',
-        'horarioAtraso',
+        'nomeCurso',
         'periodoCurso',
         'moduloCurso',
-        'nomeCurso',
+
     ];
 
-    // Se necessário, defina os campos que devem ser tratados como data/hora
-    protected $dates = [
-        'dtAtraso',
-    ];
+    // Se o campo realmente for varchar, remova isso
+    // protected $dates = [
+    //     'horarioAtraso',
+    // ];
 
     public $timestamps = false;
+
+    public function setHorarioatrasoAttribute($value)
+    {
+        $this->attributes['horarioatraso'] = date('H:i', strtotime($value));
+    }
+
+    public function getHorarioatrasoFormattedAttribute()
+    {
+        return date('H:i', strtotime($this->horarioatraso));
+    }
 }

@@ -28,6 +28,8 @@ Route::prefix('cursos')->group(function () {
     Route::get('/', [CursoController::class, 'index']);
 });
 
+Route::get('/cursos', [CursoController::class, 'index']);
+
 Route::get('/atraso', [AtrasoController::class, 'index']);
 
-Route::post('/atraso/post', [AtrasoController::class, 'store']);
+Route::post('/atraso', [AtrasoController::class, 'store']);

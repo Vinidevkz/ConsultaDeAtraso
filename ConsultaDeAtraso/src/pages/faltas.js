@@ -1,33 +1,42 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { StyleSheet, Text, View, FlatList } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function MinhasFaltas() {
   const [faltas, setFaltas] = useState([]);
 
-  useEffect(() => {
-    pegarFaltas();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const pegarFaltas = async () => {
+        try {
+          const response = await fetch("http://339e-200-53-197-8.ngrok-free.app/api/atraso");
+          const data = await response.json();
+          setFaltas(data);
+          console.log(data); // Assumindo que a resposta é um array de objetos
+        } catch (error) {
+          console.error(error);
+        }
+      };
 
-  async function pegarFaltas() {
-    try {
-      const response = await fetch("http://10.0.2.2:8000/api/atraso");
-      const data = await response.json();
-      setFaltas(data); // Assumindo que a resposta é um array de objetos
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  const renderItem = ({ item }) => (
-    <View style={styles.item}>
-      <Text>Nome do Aluno: {item.nomeAluno}</Text>
-      <Text>Horário de Atraso: {item.horarioAtraso}</Text>
-      <Text>Nome do Curso: {item.nomeCurso}</Text>
-      <Text>Período do Curso: {item.periodoCurso}</Text>
-      <Text>Módulo do Curso: {item.moduloCurso}</Text>
-    </View>
+      pegarFaltas();
+    }, [])
   );
+
+  const renderItem = ({ item }) => {
+    const horarioFormatado = item.horarioAtraso.split(':').slice(0, 2).join(':');
+  
+    return (
+      <View style={styles.item}>
+        <Text>Nome do Aluno: {item.nomeAluno}</Text>
+        <Text>Horário de Atraso: {horarioFormatado}</Text>
+        <Text>Nome do Curso: {item.nomeCurso}</Text>
+        <Text>Período do Curso: {item.periodoCurso}</Text>
+        <Text>Módulo do Curso: {item.moduloCurso}</Text>
+      </View>
+    );
+  };
+  
 
   return (
     <View style={styles.container}>
@@ -35,7 +44,6 @@ export default function MinhasFaltas() {
         data={faltas}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
-        // Assumindo que cada item tem um campo 'id'
       />
       <StatusBar style="auto" />
     </View>
