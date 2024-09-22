@@ -1,29 +1,77 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Modal, Alert } from 'react-native';
 import { useState, useEffect } from 'react';
 import { Picker } from '@react-native-picker/picker';
-
+import { BarCodeScanner } from 'expo-barcode-scanner';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 export default function Home() {
   const [nomeAluno, setNomeAluno] = useState('');
-  const [horario, setHorario] = useState('');
   const [periodo, setPeriodo] = useState('');
   const [modulo, setModulo] = useState('');
   const [curso, setCurso] = useState('');
-  const [cursos, setCursos] = useState([]); // Estado para armazenar os cursos
+  const [cursos, setCursos] = useState([]);
   const [feedbackMessage, setFeedbackMessage] = useState('');
   const [isError, setIsError] = useState(false);
 
-  const cadastrarFalta = async () => {
-    if (!nomeAluno || !horario || !periodo || !modulo || !curso) {
-      setFeedbackMessage('Por favor, preencha todos os campos.');
+  const [hasPermission, setHasPermission] = useState(null);
+  const [scanned, setScanned] = useState(false);
+  const [isScannerOpen, setIsScannerOpen] = useState(false); // Controle do modal da câmera
+
+  // Função para lidar com a leitura do QR code
+  const handleBarCodeScanned = async ({ type, data }) => {
+    setScanned(true);
+    setIsScannerOpen(false); // Fecha o modal após o scan
+
+    try {
+      const qrData = JSON.parse(data); // Supondo que os dados do QR code estejam no formato JSON
+      setNomeAluno(qrData.nomeAluno);
+      setCurso(qrData.curso);
+      setPeriodo(qrData.periodo);
+      setModulo(qrData.modulo);
+
+      // Realiza o cadastro automaticamente
+      await cadastrarFalta(qrData.nomeAluno, qrData.curso, qrData.periodo, qrData.modulo);
+    } catch (error) {
+      console.error('Erro ao processar o QR code:', error);
+      alert('Erro ao processar o QR code.');
+    }
+  };
+
+  // Função para solicitar a permissão da câmera e abrir o scanner
+  const openScanner = async () => {
+    // Solicita permissão da câmera
+    const { status } = await BarCodeScanner.requestPermissionsAsync();
+    setHasPermission(status === 'granted');
+
+    if (status === 'granted') {
+        setIsScannerOpen(true);
+        setScanned(false);
+    } else {
+        alert('Sem permissão para acessar a câmera');
+    }
+};
+
+
+
+  // Função que realiza o cadastro no banco
+  const cadastrarFalta = async (nomeAluno, curso, periodo, modulo) => {
+    let errorMessage = '';
+  
+    if (!nomeAluno || !curso || !periodo || !modulo) {
+      errorMessage += 'Todos os campos são obrigatórios.';
+    }
+  
+    if (errorMessage) {
+      Alert.alert(errorMessage)
+      setFeedbackMessage(errorMessage);
       setIsError(true);
       return;
     }
   
     try {
-      const response = await fetch("http://339e-200-53-197-8.ngrok-free.app/api/atraso", {
+      const response = await fetch("http://c501-200-53-197-8.ngrok-free.app/api/atraso", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -34,61 +82,60 @@ export default function Home() {
           nomeCurso: curso,
           periodoCurso: periodo,
           moduloCurso: modulo,
-          horarioAtraso: "12:30",
         }),
       });
   
-      // Verifique se a resposta tem status 200-299
       if (response.ok) {
         const json = await response.json();
         console.log("Sucesso ao cadastrar usuário", json);
+        Alert.alert("Atraso cadastrado com sucesso!");
         setFeedbackMessage('Cadastro realizado com sucesso!');
         setIsError(false);
+        setNomeAluno(null);
+        setCurso(null);
+        setPeriodo(null);
+        setModulo(null);
       } else {
-        // Resposta de erro com status fora da faixa 200
-        const errorText = await response.text();  // Tenta pegar o texto da resposta de erro
+        const errorText = await response.text();
         console.log("Erro de resposta do servidor:", errorText);
         setFeedbackMessage(`Erro ao cadastrar: ${errorText}`);
         setIsError(true);
       }
     } catch (error) {
-      // Captura erros de rede ou outros erros
       console.log("Erro ao cadastrar usuário:", error.message);
       setFeedbackMessage(`Erro ao cadastrar. Tente novamente. Detalhes: ${error.message}`);
       setIsError(true);
     }
   };
   
-  
 
   async function pegarCursos() {
     try {
-      const response = await fetch("http://339e-200-53-197-8.ngrok-free.app/api/cursos");
+      const response = await fetch("http://c501-200-53-197-8.ngrok-free.app/api/cursos");
       const data = await response.json();
-      setCursos(data); // Armazena os cursos no estado
+      setCursos(data);
     } catch (error) {
       console.log("Erro ao buscar cursos", error);
     }
   }
 
-  // useEffect para carregar os cursos ao montar o componente
   useEffect(() => {
     pegarCursos();
   }, []);
 
   return (
     <View style={styles.container}>
-      <View style={{width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-      <Text style={styles.title}>Cadastrar Atraso:</Text>
-
-      <TouchableOpacity style={styles.camButton}>
-       <MaterialIcons name="qr-code-scanner" size={24} color="black" />
-      </TouchableOpacity>
+      <View style={{ width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Text style={styles.title}>Cadastrar Atraso:</Text>
+        <TouchableOpacity style={styles.camButton} onPress={openScanner}>
+          <MaterialIcons name="qr-code-scanner" size={24} color="#fff" />
+        </TouchableOpacity>
       </View>
 
       <TextInput
         placeholder='Nome do Aluno(a)'
         style={[styles.input, styles.text]}
+        value={nomeAluno}
         onChangeText={text => setNomeAluno(text)}
       />
 
@@ -125,19 +172,37 @@ export default function Home() {
         <Picker.Item label="3" value="3" />
       </Picker>
 
-      <TextInput
-        placeholder='Horário de Entrada'
-        style={[styles.input, styles.text]}
-        onChangeText={text => setHorario(text)}
-      />
-
-      <TouchableOpacity style={styles.button} onPress={cadastrarFalta}>
-        <Text style={styles.text}>Enviar</Text>
+      <TouchableOpacity style={styles.button} onPress={() => cadastrarFalta(nomeAluno, curso, periodo, modulo)}>
+        <Text style={[styles.text, {color: '#fff'}]}>Enviar</Text>
+        <AntDesign name="arrowright" size={24} color="#fff" />
       </TouchableOpacity>
 
+      {isScannerOpen && (
+  <Modal
+    animationType="slide"
+    transparent={true}
+    visible={isScannerOpen}
+  >
+    <View style={styles.modalContainer}>
+      <BarCodeScanner
+        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+        style={styles.camera}
+      />
+      
+      {/* Adicionando o quadrado no centro */}
+      <View style={styles.targetBox}>
+    <View style={[styles.corner, styles.cornerTopLeft]} />
+    <View style={[styles.corner, styles.cornerTopRight]} />
+    <View style={[styles.corner, styles.cornerBottomLeft]} />
+    <View style={[styles.corner, styles.cornerBottomRight]} />
+  </View>
+      <TouchableOpacity style={styles.closeButton} onPress={() => setIsScannerOpen(false)}>
+        <Text style={styles.text}>Fechar Câmera</Text>
+      </TouchableOpacity>
+    </View>
+  </Modal>
+)}
 
-
-      <StatusBar style="auto" />
     </View>
   );
 }
@@ -154,14 +219,14 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: 'bold',
     marginVertical: 10,
-    alignSelf: 'left'
+    alignSelf: 'left',
   },
   camButton: {
     backgroundColor: '#ff8f26',
     padding: 10,
     borderRadius: 10,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   text: {
     fontSize: 17,
@@ -174,19 +239,74 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   button: {
+    width: 150,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
     backgroundColor: '#ff8f26',
     borderRadius: 25,
     paddingHorizontal: 30,
     paddingVertical: 10,
   },
-  feedback: {
-    marginTop: 20,
-    fontSize: 16,
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  errorText: {
-    color: 'red',
+  closeButton: {
+    position: 'absolute',
+    bottom: 20,
+    backgroundColor: '#ff8f26',
+    padding: 10,
+    borderRadius: 10,
   },
-  successText: {
-    color: 'green',
+  camera: {
+    width: 1000,  // Largura da janela da câmera
+    height: 1000, // Altura da janela da câmera
+    borderRadius: 40, // Deixa os cantos arredondados
+    overflow: 'hidden',
   },
+  targetBox: {
+    position: 'absolute',
+    width: 200, // Largura do quadrado
+    height: 200, // Altura do quadrado
+    borderColor: '#fff', // Cor da borda
+    backgroundColor: 'rgba(255, 255, 255, 0)', // Transparente para ver o que está atrás
+    top: '50%', // Centraliza verticalmente
+    left: '50%', // Centraliza horizontalmente
+    marginLeft: -100, // Metade da largura para ajustar
+    marginTop: -100, // Metade da altura para ajustar
+    borderTopWidth: 2,
+    borderBottomWidth: 2,
+    borderLeftWidth: 2,
+    borderRightWidth: 2,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    overflow: 'hidden',
+  },
+  corner: {
+    position: 'absolute',
+    width: 20, // Largura do canto
+    height: 20, // Altura do canto
+    backgroundColor: '#ff8f26', // Cor do canto
+  },
+  cornerTopLeft: {
+    top: -10,
+    left: -10,
+  },
+  cornerTopRight: {
+    top: -10,
+    right: -10,
+  },
+  cornerBottomLeft: {
+    bottom: -10,
+    left: -10,
+  },
+  cornerBottomRight: {
+    bottom: -10,
+    right: -10,
+  },
+  
 });

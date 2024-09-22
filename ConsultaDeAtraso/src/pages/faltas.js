@@ -10,7 +10,7 @@ export default function MinhasFaltas() {
     useCallback(() => {
       const pegarFaltas = async () => {
         try {
-          const response = await fetch("http://339e-200-53-197-8.ngrok-free.app/api/atraso");
+          const response = await fetch("http://c501-200-53-197-8.ngrok-free.app/api/atraso");
           const data = await response.json();
           setFaltas(data);
           console.log(data); // Assumindo que a resposta é um array de objetos
@@ -29,10 +29,11 @@ export default function MinhasFaltas() {
     return (
       <View style={styles.item}>
         <Text>Nome do Aluno: {item.nomeAluno}</Text>
-        <Text>Horário de Atraso: {horarioFormatado}</Text>
         <Text>Nome do Curso: {item.nomeCurso}</Text>
         <Text>Período do Curso: {item.periodoCurso}</Text>
         <Text>Módulo do Curso: {item.moduloCurso}</Text>
+
+        <Text style={{marginTop: 10, borderBottomWidth: 2, borderColor: '#ff8f26', width: 135,}}>Horário de Atraso: {horarioFormatado}</Text>
       </View>
     );
   };
