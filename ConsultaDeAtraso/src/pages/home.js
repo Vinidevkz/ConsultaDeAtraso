@@ -71,7 +71,7 @@ export default function Home() {
     }
   
     try {
-      const response = await fetch("http://c501-200-53-197-8.ngrok-free.app/api/atraso", {
+      const response = await fetch("http://9f0e-200-53-197-8.ngrok-free.app/api/atraso", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -111,7 +111,7 @@ export default function Home() {
 
   async function pegarCursos() {
     try {
-      const response = await fetch("http://c501-200-53-197-8.ngrok-free.app/api/cursos");
+      const response = await fetch("http://9f0e-200-53-197-8.ngrok-free.app/api/cursos");
       const data = await response.json();
       setCursos(data);
     } catch (error) {

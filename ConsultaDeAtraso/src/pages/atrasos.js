@@ -10,7 +10,7 @@ export default function MinhasFaltas() {
     useCallback(() => {
       const pegarFaltas = async () => {
         try {
-          const response = await fetch("http://c501-200-53-197-8.ngrok-free.app/api/atraso");
+          const response = await fetch("http://9f0e-200-53-197-8.ngrok-free.app/api/atraso");
           const data = await response.json();
           setFaltas(data);
           console.log(data); // Assumindo que a resposta é um array de objetos
@@ -23,9 +23,17 @@ export default function MinhasFaltas() {
     }, [])
   );
 
+  // Função para converter o horário string em minutos totais (para comparar)
+  const converterParaMinutos = (horario) => {
+    const [hora, minuto] = horario.split(':').map(Number);
+    return hora * 60 + minuto;
+  };
+
   const renderItem = ({ item }) => {
     const horarioFormatado = item.horarioAtraso.split(':').slice(0, 2).join(':');
-  
+    const horarioMinutos = converterParaMinutos(horarioFormatado);
+    const limiteHorario = converterParaMinutos('13:30');
+
     return (
       <View style={styles.item}>
         <Text>Nome do Aluno: {item.nomeAluno}</Text>
@@ -33,11 +41,16 @@ export default function MinhasFaltas() {
         <Text>Período do Curso: {item.periodoCurso}</Text>
         <Text>Módulo do Curso: {item.moduloCurso}</Text>
 
-        <Text style={{marginTop: 10, borderBottomWidth: 2, borderColor: '#ff8f26', width: 135,}}>Horário de Atraso: {horarioFormatado}</Text>
+        {/* Verifica se o horário de entrada é antes ou depois das 13:30 */}
+        <Text style={styles.horarioText}>Horário de Entrada: {horarioFormatado}</Text>
+        {horarioMinutos <= limiteHorario ? (
+          <Text style={styles.textoNoHorario}>Chegou no horário</Text>
+        ) : (
+          <Text style={styles.textoAtrasado}>Chegou atrasado</Text>
+        )}
       </View>
     );
   };
-  
 
   return (
     <View style={styles.container}>
@@ -64,5 +77,19 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     borderRadius: 15,
     width: '100%',
+  },
+  horarioText: {
+    marginTop: 10,
+    borderBottomWidth: 2,
+    borderColor: '#ff8f26',
+    width: 140,
+  },
+  textoNoHorario: {
+    color: 'green',
+    marginTop: 5,
+  },
+  textoAtrasado: {
+    color: 'red',
+    marginTop: 5,
   },
 });

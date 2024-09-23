@@ -1,6 +1,6 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Home from './pages/home.js';
-import MinhasFaltas from './pages/faltas.js';
+import MeusAtrasos from './pages/atrasos.js';
 
 const Drawer = createDrawerNavigator();
 
@@ -24,9 +24,9 @@ export default function MyDrawer() {
         options={{ title: 'Página Inicial' }} 
       />
       <Drawer.Screen 
-        name="Minhas Faltas" 
-        component={MinhasFaltas} 
-        options={{ title: 'Minhas Faltas' }} 
+        name="Meus Atrasos" 
+        component={MeusAtrasos} 
+        options={{ title: 'Meus Atrasos' }} 
       />
     </Drawer.Navigator>
   );
