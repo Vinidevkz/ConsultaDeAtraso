@@ -10,7 +10,7 @@ export default function MinhasFaltas() {
     useCallback(() => {
       const pegarFaltas = async () => {
         try {
-          const response = await fetch("http://9f0e-200-53-197-8.ngrok-free.app/api/atraso");
+          const response = await fetch("http://5399-177-95-134-122.ngrok-free.app/api/atraso");
           const data = await response.json();
           setFaltas(data);
           console.log(data); // Assumindo que a resposta é um array de objetos
